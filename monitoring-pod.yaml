@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: monitoring-pod
+spec:
+  containers:
+  - name: monitoring-container
+    image: prom/prometheus:v2.30.0 
+    ports:
+    - containerPort: 9090
+  - name: prometheus-config-reloader
+    image: quay.io/coreos/configmap-reload:v0.0.1
+    args:
+    - --volume-dir=/etc/prometheus
+    - --webhook-url=http://localhost:9090/-/reload
+  volumes:
+    - name: prometheus-config-volume
+      configMap:
+        name: prometheus-config
